@@ -1,0 +1,3 @@
+"sex","count","disease_count","no_disease_count","prevalence","Gender","ci_lower","ci_upper"
+0,96,72,24,0.75,"Female",0.654901889760503,0.825860316310659
+1,206,92,114,0.446601941747573,"Male",0.380308544349429,0.514850400295544

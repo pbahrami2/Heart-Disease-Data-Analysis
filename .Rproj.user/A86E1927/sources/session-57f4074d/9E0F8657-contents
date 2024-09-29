@@ -1,0 +1,44 @@
+# Load necessary libraries
+library(tidyverse)
+
+# Load the dataset
+heart_data <- read.csv("heart.csv")
+
+# 1. Basic Cleaning
+
+# Removing duplicate rows
+heart_data <- heart_data %>% distinct()
+
+# Converting 'sex', 'cp', and 'target' to factors for categorical analysis
+heart_data$sex <- as.factor(heart_data$sex)
+heart_data$cp <- as.factor(heart_data$cp)
+heart_data$target <- as.factor(heart_data$target)
+
+# 2. Data Validation
+
+# Validate age range
+# Assuming age should be between 0 and 120
+heart_data <- heart_data %>% filter(age >= 0 & age <= 120)
+
+# Validate 'sex' values
+# Assuming 'sex' should only have values 0 and 1
+heart_data <- heart_data %>% filter(sex %in% c(0, 1))
+
+# Validate 'cp' (chest pain type) values
+# Assuming 'cp' should have values 0, 1, 2, 3 based on initial dataset review
+heart_data <- heart_data %>% filter(cp %in% c(0, 1, 2, 3))
+
+# Validate 'target' values
+# Assuming 'target' should be binary (0 or 1)
+heart_data <- heart_data %>% filter(target %in% c(0, 1))
+
+# 3. Export the cleaned data
+write.csv(heart_data, "cleaned_heart_data.csv", row.names = FALSE)
+
+
+
+
+
+
+
+

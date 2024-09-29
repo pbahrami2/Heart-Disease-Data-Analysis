@@ -1,0 +1,137 @@
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+
+# Load the analyzed data
+age_summary <- read.csv("age_summary.csv")
+gender_heart_disease <- read.csv("gender_heart_disease.csv")
+cp_heart_disease <- read.csv("cp_heart_disease.csv")
+print(names(cp_heart_disease))
+modified_heart_data <- read.csv("modified_heart_data.csv")
+
+# Convert the 'target' variable to a factor with labels
+heart_data$target <- factor(heart_data$target, levels = c(0, 1), labels = c("No Heart Disease", "Heart Disease"))
+
+# 1. Age and Heart Disease Visualization
+p1 <- ggplot(heart_data, aes(x = age, fill = target)) +
+  geom_histogram(position = "dodge", bins = 30, alpha = 0.6) +
+  scale_fill_manual(values = c("No Heart Disease" = "blue", "Heart Disease" = "red")) +
+  labs(title = "Age Distribution by Heart Disease Status", x = "Age", y = "Count", fill = "Status") +
+  theme_minimal()
+
+# Convert to interactive plotly object with custom tooltips
+p1 <- ggplotly(p1, tooltip = c("x", "fill"))
+
+# 2. Gender Differences in Heart Disease Visualization
+gender_heart_disease_for_p2 <- gender_heart_disease
+
+# Generate the p2 plot with customized tooltips
+p2 <- ggplot(gender_heart_disease, aes(x = Gender, y = prevalence, fill = Gender, 
+                                       text = paste('Gender: ', Gender, 
+                                                    '<br>Prevalence: ', round(prevalence, 2), 
+                                                    '<br>95% Confidence Interval: [', round(ci_lower, 2), ', ', round(ci_upper, 2), ']',
+                                                    '<br>This range indicates that we are 95% confident the true prevalence of heart disease for ', Gender, ' falls within this interval.'))) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("Female" = "green", "Male" = "orange")) +
+  labs(title = "Prevalence of Heart Disease by Gender",
+       x = "Gender",
+       y = "Prevalence",
+       fill = "Gender") +
+  theme_minimal()
+
+# Convert to Plotly
+p2 <- ggplotly(p2, tooltip = "text")
+
+# Correcting the names of the columns after spreading the data
+cp_heart_disease <- cp_heart_disease %>%
+  rename(no_disease = `X0`, disease = `X1`) 
+
+# 3. Chest Pain Type and Heart Disease Visualization
+cp_heart_disease$cp <- factor(cp_heart_disease$cp, levels = c(0, 1, 2, 3), 
+                              labels = c("Typical", "Asymptotic", 
+                                         "Non-Anginal", "Non-typical"))
+
+# Now plot with the updated factor levels
+p3 <- ggplot(cp_heart_disease, aes(x = cp, y = no_disease, fill = 'No Heart Disease', 
+                                   text = paste('Chest Pain Type:', cp,
+                                                '<br>Count (No Heart Disease):', no_disease,
+                                                '<br>Count (Heart Disease):', disease))) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.75)) +
+  geom_bar(aes(y = disease, fill = 'Heart Disease'), stat = "identity", position = position_dodge(width = 0.75)) +
+  scale_fill_manual(values = c('No Heart Disease' = "blue", 'Heart Disease' = "red")) +
+  labs(title = "Chest Pain Type Distribution by Heart Disease Status", 
+       x = "Chest Pain Type", 
+       y = "Count", 
+       fill = "Heart Disease Status") +
+  theme_minimal()
+
+# Convert to interactive plotly object with customized tooltips
+p3 <- ggplotly(p3, tooltip = "text")
+
+# Ensure 'target' is a factor with labels for readability
+modified_heart_data$target <- factor(modified_heart_data$target, levels = c(0, 1), labels = c("No Heart Disease", "Heart Disease"))
+
+# 4. Visualization for Max Heart Rate Achieved vs Age Group by Heart Disease Status
+p4 <- ggplot(modified_heart_data, aes(x = reorder(age_group, age), y = thalach, color = target, 
+                                      text = paste("Age Group:", reorder(age_group, age), 
+                                                   "<br>Max Heart Rate (thalach):", thalach, 
+                                                   "<br>Heart Disease Status:", as.character(target)))) +
+  geom_jitter(alpha = 0.5, position = position_jitter(width = 0.2)) +
+  geom_smooth(aes(group = target), method = "lm", se = FALSE) +  # Keep the trend lines
+  scale_color_manual(values = c("No Heart Disease" = 'blue', "Heart Disease" = 'red')) +
+  labs(title = "Max Heart Rate Achieved vs Age Group by Heart Disease Status",
+       x = "Age Group",
+       y = "Max Heart Rate (thalach)",
+       color = "Heart Disease Status") +
+  theme_minimal()
+
+# Convert to interactive plotly object with tooltips
+p4 <- ggplotly(p4, tooltip = "text")
+
+# 5. Interaction of Cholesterol Levels and Resting Blood Pressure on Heart Disease Visualization
+p5 <- ggplot(modified_heart_data, aes(x = chol, y = trestbps, color = target, 
+                                      text = paste("Cholesterol Level:", chol, 
+                                                   "<br>Resting Blood Pressure:", trestbps, 
+                                                   "<br>Heart Disease Status:", as.character(target)))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(aes(group = target), method = "lm", se = FALSE) +  # Include group aesthetic for separate trend lines
+  scale_color_manual(values = c("No Heart Disease" = 'blue', "Heart Disease" = 'red')) +
+  labs(title = "Interaction of Cholesterol Levels and Resting Blood Pressure on Heart Disease",
+       x = "Cholesterol",
+       y = "Resting Blood Pressure (trestbps)",
+       color = "Heart Disease Status") +
+  theme_minimal()
+
+# Convert to interactive plotly object with custom tooltips
+p5 <- ggplotly(p5, tooltip = "text")
+
+# Display the interactive plots
+p1
+p2
+p3
+p4
+p5
+
+
+
+
+
+# Exporting the visualizations to files 
+ggsave("age_distribution_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("gender_prevalence_of_heart_disease.png", plot = last_plot(), device = "png")
+ggsave("chest_pain_type_distribution_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("max_heart_rate_vs_age_group_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("cholesterol_bp_interaction_on_heart_disease.png", plot = last_plot(), device = "png")
+
+
+
+
+
+
+
+
+
+
+
+

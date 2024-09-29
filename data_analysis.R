@@ -1,0 +1,63 @@
+# Load necessary libraries
+library(tidyverse)
+library(binom)
+
+# Load the cleaned dataset
+heart_data <- read.csv("cleaned_heart_data.csv")
+
+# 1. Age and Heart Disease Analysis
+# Summary statistics of age for individuals with and without heart disease
+age_summary <- heart_data %>% 
+  group_by(target) %>% 
+  summarise(
+    mean_age = mean(age), 
+    median_age = median(age), 
+    min_age = min(age), 
+    max_age = max(age)
+  )
+
+# 2. Gender Differences in Heart Disease
+# Calculating the prevalence of heart disease by gender
+gender_heart_disease <- heart_data %>% 
+  group_by(sex) %>% 
+  summarise(
+    count = n(),
+    disease_count = sum(target == 1),
+    no_disease_count = sum(target == 0),
+    prevalence = mean(target == 1)
+  ) %>% 
+  mutate(
+    prevalence = disease_count / count,
+    Gender = factor(sex, levels = c(0, 1), labels = c("Female", "Male")) # Create a new 'Gender' column
+  )
+
+# Continue with the CI calculations and addition to the dataframe as in your existing code...
+ci <- binom.confint(x = gender_heart_disease$disease_count, n = gender_heart_disease$count, conf.level = 0.95, methods = "wilson")
+gender_heart_disease$ci_lower <- ci$lower
+gender_heart_disease$ci_upper <- ci$upper
+
+# 3. Chest Pain Type and Heart Disease
+# Distribution of chest pain types among individuals with and without heart disease
+cp_heart_disease <- heart_data %>% 
+  group_by(cp, target) %>% 
+  summarise(
+    count = n()
+  ) %>% 
+  spread(key = target, value = count)
+
+# Creating age groups for further analysis
+heart_data$age_group <- cut(heart_data$age, breaks=c(29, 40, 50, 60, 70, 80), include.lowest=TRUE)
+
+# Exporting the analysed data
+write.csv(heart_data, "modified_heart_data.csv", row.names = FALSE) # Dataset with age groups
+write.csv(age_summary, "age_summary.csv", row.names = FALSE)
+write.csv(gender_heart_disease, "gender_heart_disease.csv", row.names = FALSE)
+write.csv(cp_heart_disease, "cp_heart_disease.csv", row.names = FALSE)
+
+
+
+
+
+
+
+

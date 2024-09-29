@@ -1,0 +1,26 @@
+{
+    "id": "9FD0D4C3",
+    "path": "~/HeartDiseaseAnalysis/data_visualisation.R",
+    "project_path": "data_visualisation.R",
+    "type": "r_source",
+    "hash": "1112242315",
+    "contents": "",
+    "dirty": false,
+    "created": 1704202004849.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "119,40",
+        "scrollLine": "104"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1704246231,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1704246231905,
+    "read_only": false,
+    "read_only_alternatives": []
+}

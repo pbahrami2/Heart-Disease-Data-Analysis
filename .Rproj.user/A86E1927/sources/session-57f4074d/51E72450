@@ -1,0 +1,27 @@
+{
+    "id": "51E72450",
+    "path": "~/StudentDropOutRateAnalysis/data_visualisation.R",
+    "project_path": "data_visualisation.R",
+    "type": "r_source",
+    "hash": "1668532478",
+    "contents": "",
+    "dirty": false,
+    "created": 1704149215373.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "19,36",
+        "scrollLine": "4"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1704201001,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1704201001912,
+    "read_only": false,
+    "read_only_alternatives": []
+}

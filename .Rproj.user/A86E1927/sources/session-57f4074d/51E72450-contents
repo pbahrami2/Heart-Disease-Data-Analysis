@@ -1,0 +1,118 @@
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+
+# Load the analyzed data
+age_summary <- read.csv("age_summary.csv")
+gender_heart_disease <- read.csv("gender_heart_disease.csv")
+cp_heart_disease <- read.csv("cp_heart_disease.csv")
+modified_heart_data <- read.csv("modified_heart_data.csv")
+
+
+
+# 1. Age and Heart Disease Visualization
+p1 <- ggplot(heart_data, aes(x = age, fill = as.factor(target), text = paste("Age:", age, "<br>Heart Disease Status:", ifelse(as.factor(target) == 1, "Present", "Absent")))) +
+  geom_histogram(position = "dodge", bins = 30, alpha = 0.6) +
+  scale_fill_manual(values = c("blue", "red"), labels = c("No Heart Disease", "Heart Disease")) +
+  labs(title = "Age Distribution by Heart Disease Status", x = "Age", y = "Count", fill = "Status") +
+  theme_minimal()
+
+p1 <- ggplotly(p1, tooltip = "text")
+
+
+
+
+# 2. Gender Differences in Heart Disease Visualization
+gender_heart_disease$Gender <- factor(gender_heart_disease$sex, labels = c("Female", "Male"))
+
+# Enhanced ggplot code with the correct Gender column
+ggplot(gender_heart_disease, aes(x = Gender, y = prevalence, fill = Gender)) +
+  geom_bar(stat = "identity", position = position_dodge()) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, position = position_dodge(0.9)) +
+  scale_fill_manual(values = c("Female" = "green", "Male" = "orange")) +
+  labs(title = "Prevalence of Heart Disease by Gender",
+       subtitle = "Error bars represent 95% confidence intervals",
+       x = "Gender",
+       y = "Prevalence",
+       fill = "Gender") +
+  theme_minimal()
+
+# 3. Chest Pain Type and Heart Disease Visualization
+colnames(cp_heart_disease)[2] <- 'no_disease'
+colnames(cp_heart_disease)[3] <- 'disease'
+
+ggplot(cp_heart_disease, aes(x = as.factor(cp))) +
+  geom_bar(aes(y = no_disease, fill = "No Heart Disease"), stat = "identity", position = position_dodge(width = 0.75)) +
+  geom_bar(aes(y = disease, fill = "Heart Disease"), stat = "identity", position = position_dodge(width = 0.75)) +
+  scale_fill_manual(values = c("No Heart Disease" = "blue", "Heart Disease" = "red")) +
+  labs(title = "Chest Pain Type Distribution by Heart Disease Status", 
+       x = "Chest Pain Type", 
+       y = "Count", 
+       fill = "Status") +
+  theme_minimal()
+
+# New visualizations for the exploratory questions
+
+
+# 4. Max Heart Rate Achieved vs Age Group by Heart Disease Status Visualization
+p4 <- ggplot(modified_heart_data, aes(x = reorder(age_group, age), y = thalach, color = as.factor(target), 
+                                      text = paste("Age Group:", reorder(age_group, age), 
+                                                   "<br>Max Heart Rate (thalach):", thalach, 
+                                                   "<br>Heart Disease Status:", ifelse(target == 1, "Present", "Absent")))) +
+  geom_jitter(alpha = 0.5, position = position_jitter(width = 0.2)) +
+  geom_smooth(aes(group = target), method = "lm", se = FALSE) +
+  scale_color_manual(values = c('0' = 'blue', '1' = 'red'), labels = c("Absent", "Present")) +
+  labs(title = "Max Heart Rate Achieved vs Age Group by Heart Disease Status",
+       x = "Age Group",
+       y = "Max Heart Rate (thalach)",
+       color = "Heart Disease Status") +
+  theme_minimal()
+
+p4 <- ggplotly(p4, tooltip = "text")
+
+# 5. Interaction of Cholesterol Levels and Resting Blood Pressure on Heart Disease Visualization
+# 5. Interaction of Cholesterol Levels and Resting Blood Pressure on Heart Disease Visualization
+p5 <- ggplot(modified_heart_data, aes(x = chol, y = trestbps, color = as.factor(target), 
+                                      text = paste("Cholesterol Level:", chol, 
+                                                   "<br>Resting Blood Pressure (trestbps):", trestbps, 
+                                                   "<br>Heart Disease Status:", ifelse(target == 1, "Present", "Absent")))) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(aes(group = target), method = "lm", se = FALSE) +  # Add group aesthetic for trend lines
+  scale_color_manual(values = c('0' = 'blue', '1' = 'red'), labels = c("No Heart Disease", "Heart Disease")) +
+  labs(title = "Interaction of Cholesterol Levels and Resting Blood Pressure on Heart Disease",
+       x = "Cholesterol",
+       y = "Resting Blood Pressure (trestbps)",
+       color = "Heart Disease Status") +
+  theme_minimal()
+
+p5 <- ggplotly(p5, tooltip = "text")
+
+
+p1
+p2
+p3
+p4
+p5
+
+
+
+
+
+# Exporting the visualizations to files (if needed)
+ggsave("age_distribution_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("gender_prevalence_of_heart_disease.png", plot = last_plot(), device = "png")
+ggsave("chest_pain_type_distribution_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("max_heart_rate_vs_age_group_by_heart_disease_status.png", plot = last_plot(), device = "png")
+ggsave("cholesterol_bp_interaction_on_heart_disease.png", plot = last_plot(), device = "png")
+
+
+
+
+
+
+
+
+
+
+
+
