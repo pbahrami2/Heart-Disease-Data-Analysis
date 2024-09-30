@@ -24,19 +24,30 @@ The dataset used for this analysis, [Heart Disease Dataset](https://www.kaggle.c
 ### 1. Age and Heart Disease
 - **Question**: How does the age distribution differ between individuals with and without heart disease?
 - **Approach**: A dual-coloured histogram was created to visualize the age distribution for individuals with and without heart disease. This revealed which age groups are most affected.
+![image](https://github.com/user-attachments/assets/d01ca419-3e33-4e27-93ae-d638f945dfcc)
+
 
 ### 2. Gender Differences in Heart Disease
 - **Question**: Is there a significant difference in the prevalence of heart disease between males and females?
 - **Approach**: A bar chart with 95% confidence intervals was used to compare heart disease prevalence between genders.
+![image](https://github.com/user-attachments/assets/49806109-31e8-4f9b-b89c-ff893fab28a1)
+
 
 ### 3. Chest Pain Type and Heart Disease
 - **Question**: What is the relationship between chest pain type and heart disease?
 - **Approach**: A stacked bar chart was employed to explore how different chest pain types correlate with heart disease presence.
+![image](https://github.com/user-attachments/assets/6b25df4c-dd93-4862-984c-41226726ee79)
+
 
 ## Exploratory Analysis
 In addition to the initial questions, the project explored:
 - **Maximum heart rate (thalach) across different age groups**.
+![image](https://github.com/user-attachments/assets/2295e224-9457-4ba2-a51c-dc42e53586ce)
+
 - **Interaction effects between cholesterol levels (chol) and resting blood pressure (trestbps)** and their combined impact on heart disease prevalence.
+![image](https://github.com/user-attachments/assets/40ce9df5-49f7-4552-9605-f2fc88fb6c38)
+
+
 
 ## Visualization Techniques
 Interactive visualizations were created using **ggplot2** and **plotly** in R, including:
